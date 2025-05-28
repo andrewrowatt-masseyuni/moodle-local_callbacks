@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 function local_callbacks_before_standard_html_head() {
     global $PAGE, $DB;
-    xdebug_break();
+    
     if ($PAGE->pagetype == "mod-quiz-attempt") {
         $cmid = $PAGE->url->params()['cmid'];
         $sql = 'SELECT *
@@ -57,7 +57,7 @@ function local_callbacks_coursemodule_standard_elements($formwrapper, $mform) {
     // For example $existing = get_existing($coursemodule);
     // You have to write get_existing.
     $modulename = $formwrapper->get_current()->modulename;
-    if ($modulename == 'assign') {
+    if ($modulename == 'assignXX') {
         $mform->addElement('header', 'exampleheader', get_string('exampleheader', 'local_callbacks'));
         $mform->addElement('text', 'examplefield', get_string('examplefieldlabel', 'local_callbacks'));
         $mform->setType('examplefield', PARAM_RAW);
@@ -74,7 +74,7 @@ function local_callbacks_coursemodule_standard_elements($formwrapper, $mform) {
  * See plugin_extend_coursemodule_edit_post_actions in
  * https://github.com/moodle/moodle/blob/master/course/modlib.php
  */
-function local_callbacks_coursemodule_edit_post_actions($data, $course) {
+function local_callbacks_coursemodule_edit_post_actionsX($data, $course) {
     // Pull apart $data and insert/update the database table.
 }
 
@@ -86,7 +86,29 @@ function local_callbacks_coursemodule_edit_post_actions($data, $course) {
  * @return void
  */
 function local_callbacks_coursemodule_validation($fromform, $fields) {
-    if (get_class($fromform) == 'mod_assign_mod_form') {
+    if (get_class($fromform) == 'mod_assignXX_mod_form') {
      \core\notification::add($fields['examplefield'], \core\notification::INFO);
     }
+}
+
+ /**
+  * Summary of local_multilanguagenames_before_standard_top_of_body_html
+  * @return string
+  */
+function local_callbacks_before_standard_top_of_body_htmlx(): string {
+    global $CFG;
+    global $PAGE;
+    if (during_initial_install() || isset($CFG->upgraderunning) || !get_config('local_multilanguagenames', 'version')) {
+        // Do nothing during installation or upgrade.
+        return '';
+    }
+
+    if ($PAGE->pagetype == 'mod-assign-view' || $PAGE->pagetype == 'mod-forum-mod') {
+        $cmid = $PAGE->cm->id;
+        $type = \local_assess_type\assess_type::get_type_name($cmid);
+
+        $PAGE->requires->js_call_amd('local_callbacks/callbacks1', 'init',['descriptionfragment' => "<div>$type</div>" ]);
+    }
+
+    return '';
 }
