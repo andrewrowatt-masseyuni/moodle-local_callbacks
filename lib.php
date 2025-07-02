@@ -95,7 +95,7 @@ function local_callbacks_coursemodule_validation($fromform, $fields) {
   * Summary of local_multilanguagenames_before_standard_top_of_body_html
   * @return string
   */
-function local_callbacks_before_standard_top_of_body_htmlx(): string {
+function local_callbacks_before_standard_top_of_body_html(): string {
     global $CFG;
     global $PAGE;
     if (during_initial_install() || isset($CFG->upgraderunning) || !get_config('local_multilanguagenames', 'version')) {
